@@ -1,5 +1,6 @@
 package com.example.pratyushsingh.scoreapp;
 
+import android.os.AsyncTask;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -15,7 +16,7 @@ import java.net.URL;
  */
 
 //backend class that gets the data
-public class RetrieveData {
+public class RetrieveData extends AsyncTask<Void, Void, String>{
     private final String PLAYER_DATA_URL = "http://data.nba.net/10s/prod/v1/2017/players.json";
     private String firstName;
     private String lastName;
@@ -30,7 +31,7 @@ public class RetrieveData {
         try {
             JSONObject jsonObject = new JSONObject(jsonStr);
             JSONArray playerData = jsonObject.getJSONObject("league").getJSONArray("standard");
-            System.out.println(playerData.getJSONObject(0).get("firstName"));
+             Log.e("MESSAGE: ", playerData.getJSONObject(0).get("firstName").toString());
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -63,5 +64,11 @@ public class RetrieveData {
         }
 
         return jsonResponse.toString();
+    }
+
+    protected String doInBackground(Void... urls) {
+        populatePlayer();
+
+        return "hello";
     }
 }
