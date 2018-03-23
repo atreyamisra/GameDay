@@ -33,6 +33,9 @@ public class Player {
     @ColumnInfo(name = "pos")
     private String pos;
 
+    @ColumnInfo(name = "bio")
+    private String bio;
+
 
     public int getPlayerId() {
         return playerId;
@@ -54,6 +57,9 @@ public class Player {
         return pos;
     }
 
+    public String getBio() {
+        return bio;
+    }
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
@@ -67,17 +73,25 @@ public class Player {
         this.pos = pos;
     }
 
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
     private void setPlayerId(int playerId) {
         this.playerId = playerId;
     }
 
-    public Player(String firstName, String lastName, String pos, int playerId) {
+    private void setTeamId(int teamId) {
+       this.teamId = teamId;
+    }
+
+    public Player(String firstName, String lastName, String pos, String bio, int playerId, int teamId) {
         setFirstName(firstName);
         setLastName(lastName);
         setPos(pos);
         setPlayerId(playerId);
-
-        //do we need to pre-populate the teamId or when we instantiate teamId?
+        setBio(bio);
+        setTeamId(teamId);
     }
 
 
