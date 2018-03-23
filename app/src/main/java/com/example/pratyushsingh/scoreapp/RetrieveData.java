@@ -16,6 +16,7 @@ import java.net.URL;
 //backend class that gets the data
 public class RetrieveData {
     private final String PLAYER_DATA_URL = "http://data.nba.net/10s/prod/v1/2017/players.json";
+    private final String TEAM_DATA_URL = "http://data.nba.net/prod/v1/2017/teams.json";
     private String firstName;
     private String lastName;
     private int playerId;
@@ -36,6 +37,43 @@ public class RetrieveData {
         StringBuilder jsonResponse = new StringBuilder();
         try {
             URL callURL = new URL(PLAYER_DATA_URL);
+            HttpURLConnection urlConnection = (HttpURLConnection) callURL.openConnection(); //open connection to service
+
+            try {
+                BufferedReader bufferedReader = new BufferedReader(new
+                        InputStreamReader(urlConnection.getInputStream()));
+                String line;
+
+                while ((line = bufferedReader.readLine()) != null) {
+                    jsonResponse.append(line);
+                }
+
+                bufferedReader.close();
+
+            } finally {
+                urlConnection.disconnect();
+            }
+        } catch (Exception e) {
+            Log.e("ERROR", e.getMessage(), e);
+            return null;
+        }
+
+        return jsonResponse.toString();
+    }
+    public void populateTeam(){
+        String jsonStr = getPlayerJSON();
+        System.out.println(jsonStr);
+        try {
+            JSONObject jsonObject = new JSONObject(jsonStr);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    private String getTeamJSON(){
+        StringBuilder jsonResponse = new StringBuilder();
+        try {
+            URL callURL = new URL(TEAM_DATA_URL);
             HttpURLConnection urlConnection = (HttpURLConnection) callURL.openConnection(); //open connection to service
 
             try {
