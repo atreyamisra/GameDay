@@ -2,8 +2,9 @@ package com.example.pratyushsingh.scoreapp;
 
 import android.util.Log;
 
-import org.json.*;
-
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -21,12 +22,16 @@ public class RetrieveData {
     private String lastName;
     private int playerId;
     private String pos;
-    //private int teamId;
+    private int teamId;
+
+    public RetrieveData() {}
 
     public void populatePlayer() {
         String jsonStr = getPlayerJSON();
         try {
             JSONObject jsonObject = new JSONObject(jsonStr);
+            JSONArray playerData = jsonObject.getJSONObject("league").getJSONArray("standard");
+            System.out.println(playerData.getJSONObject(0).get("firstName"));
 
         } catch (JSONException e) {
             e.printStackTrace();
