@@ -11,6 +11,9 @@ public class HomeScreen extends AppCompatActivity {
         RetrieveData hello = new RetrieveData();
         hello.populateTeam();
 
+        RetrieveData retrieveData = new RetrieveData();
+        retrieveData.execute();
+
 
     }
 
