@@ -67,7 +67,7 @@ public class RetrieveData {
     }
     public void populateTeam(){
         String jsonStr = getPlayerJSON();
-        System.out.println(jsonStr);
+        Log.e("hello",jsonStr);
         try {
             JSONObject jsonObject = new JSONObject(jsonStr);
 
