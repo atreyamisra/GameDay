@@ -17,6 +17,7 @@ import org.json.*;
 @Entity(foreignKeys = @ForeignKey(entity = Team.class, parentColumns = "id", childColumns = "teamId"))
 public class Player {
     @PrimaryKey(autoGenerate = true)
+    private int uid;
 
     @ColumnInfo(name = "firstName")
     private String firstName;

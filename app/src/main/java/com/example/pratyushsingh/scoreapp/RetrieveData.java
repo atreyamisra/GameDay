@@ -15,7 +15,10 @@ import java.net.URL;
  * Created by pratyushsingh on 3/22/18.
  */
 
-//backend class that gets the data
+/**
+ * @author Pratyush Singh
+ * RetrieveData is a backend asynchronous class that pulls various data from the API to populate the database
+ */
 public class RetrieveData extends AsyncTask<Void, Void, String>{
     private final String PLAYER_DATA_URL = "http://data.nba.net/10s/prod/v1/2017/players.json";
     private String firstName;
@@ -26,18 +29,28 @@ public class RetrieveData extends AsyncTask<Void, Void, String>{
 
     public RetrieveData() {}
 
+    /**
+     * Main driver function that takes the JSON data from getPlayerJSON and populates the Database
+     * @TODO: populate the database (lol)
+     * @param NONE
+     */
     public void populatePlayer() {
         String jsonStr = getPlayerJSON();
         try {
             JSONObject jsonObject = new JSONObject(jsonStr);
             JSONArray playerData = jsonObject.getJSONObject("league").getJSONArray("standard");
-             Log.e("MESSAGE: ", playerData.getJSONObject(0).get("firstName").toString());
+
 
         } catch (JSONException e) {
+            //@TODO: introduce a better way to handle errors
             e.printStackTrace();
         }
     }
 
+    /**
+     * Helper function that retrieves the raw JSON data from the API
+     * @return JSON
+     */
     private String getPlayerJSON() {
         StringBuilder jsonResponse = new StringBuilder();
         try {
@@ -53,22 +66,26 @@ public class RetrieveData extends AsyncTask<Void, Void, String>{
                     jsonResponse.append(line);
                 }
 
-                bufferedReader.close();
+                bufferedReader.close(); //close bufferedReader resources
 
             } finally {
-                urlConnection.disconnect();
+                urlConnection.disconnect(); //close connection
             }
         } catch (Exception e) {
             Log.e("ERROR", e.getMessage(), e);
+            
             return null;
         }
 
         return jsonResponse.toString();
     }
 
+    /** 
+     * @param URLS
+     */
     protected String doInBackground(Void... urls) {
         populatePlayer();
 
-        return "hello";
+        return "";
     }
 }
