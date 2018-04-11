@@ -18,15 +18,37 @@ import java.util.*;
 
 //backend class that gets the data
 public class RetrieveData extends AsyncTask<Void, Void, String>{
+    private volatile static RetrieveData instance;
+
     private final String PLAYER_DATA_URL = "http://data.nba.net/10s/prod/v1/2017/players.json";
-    private final String TEAM_DATA_URL = "http://data.nba.net/prod/v1/2017/teams.json";
+    private final String TEAM_DATA_URL = "http://data.nba." +
+            "net/prod/v1/2017/teams.json";
+
     private String firstName;
     private String lastName;
     private int playerId;
     private String pos;
     private int teamId;
+    private ArrayList<PlayerAPI> players = new ArrayList<>();
 
-    public RetrieveData() {}
+    private RetrieveData() {}
+
+    public static RetrieveData getInstance() {
+        if (instance == null) {
+            synchronized (RetrieveData.class) {
+                if (instance == null) {
+                    instance = new RetrieveData();
+                }
+            }
+        }
+        return instance;
+    }
+
+    public ArrayList<PlayerAPI> getPlayers() {
+        while(players.size() < 20) {};
+        return players;
+    }
+
 
     public void populatePlayer() {
         String jsonStr = getPlayerJSON();
@@ -34,7 +56,6 @@ public class RetrieveData extends AsyncTask<Void, Void, String>{
             JSONObject jsonObject = new JSONObject(jsonStr);
             JSONArray playerData = jsonObject.getJSONObject("league").getJSONArray("standard");
             int n = playerData.length();
-            ArrayList<PlayerAPI> players = new ArrayList<PlayerAPI>();
             for(int i=0; i<n; i++){
                 String firstName= playerData.getJSONObject(i).get("firstName").toString();
                 String lastName = playerData.getJSONObject(i).get("lastName").toString();
