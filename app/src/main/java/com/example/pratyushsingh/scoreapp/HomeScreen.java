@@ -9,7 +9,6 @@ public class HomeScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
         RetrieveData hello = new RetrieveData();
-        hello.populateTeam();
 
         RetrieveData retrieveData = new RetrieveData();
         retrieveData.execute();
