@@ -55,7 +55,7 @@ public class PlayerAPI {
     }
 
     /**
-     * TODO: Store a key-value pair in SharedPreferences for teamName and teamId so when teamName is pased I can retrieve the teamId quickly
+     * TODO: Store a key-value pair in SharedPreferences for teamName and teamId so when teamName is passed I can retrieve the teamId quickly
      * @param context
      * @param playerName
      * @param teamName
@@ -63,6 +63,7 @@ public class PlayerAPI {
      */
     public static String getPlayerId(Context context, String playerName, String teamName) {
         String [] files  = context.fileList();
+
 
         return "";
 

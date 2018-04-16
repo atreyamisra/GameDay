@@ -42,9 +42,8 @@ public class RetrieveData extends AsyncTask<Void, Void, String> {
      * @param
      */
     private void populatePlayer() {
-        String jsonData = getPlayerJSON();
+        String jsonData = getJSON(PLAYER_DATA_URL);
         try {
-
             JSONObject jsonObject = new JSONObject(jsonData);
             JSONArray playerData = jsonObject.getJSONObject("league").getJSONArray(NBA);
             String firstName;
@@ -72,6 +71,34 @@ public class RetrieveData extends AsyncTask<Void, Void, String> {
         }
     }
 
+    private void populateTeams() {
+        String jsonData = getJSON(TEAM_DATA_URL);
+        try {
+            JSONObject jsonObject = new JSONObject(jsonData);
+            JSONArray teamData = jsonObject.getJSONObject("league").getJSONArray(NBA);
+            String city;
+            String teamName;
+            String teamId;
+            String confName;
+            String divName;
+            String triCode;
+
+            for(int i = 0; i < teamData.length(); i++) {
+                JSONObject teamJSON = teamData.getJSONObject(i);
+                if(teamJSON.get("isNBAFranchise").toString().equalsIgnoreCase("true")) {
+                    city =
+
+                }
+            }
+
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     private void storeToCache(String firstName, String lastName, String personId, String teamId) {
         try {
             String fileName = personId;
@@ -87,7 +114,7 @@ public class RetrieveData extends AsyncTask<Void, Void, String> {
         }
     }
 
-    private String getPlayerJSON() {
+    private String getJSON(String url) {
         StringBuilder jsonResponse = new StringBuilder();
         try {
             URL callURL = new URL(PLAYER_DATA_URL);
@@ -115,6 +142,7 @@ public class RetrieveData extends AsyncTask<Void, Void, String> {
 
         return jsonResponse.toString();
     }
+
 
 
     private String getTeamId(JSONObject playerJSON) {
@@ -194,8 +222,11 @@ public class RetrieveData extends AsyncTask<Void, Void, String> {
 
     protected String doInBackground(Void... urls) {
         populatePlayer();
+        populateTeams();
         //test();
 
         return "";
     }
+
+
 }
