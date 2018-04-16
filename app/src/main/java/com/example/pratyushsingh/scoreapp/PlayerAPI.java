@@ -26,6 +26,7 @@ public class PlayerAPI {
 
         return file;
     }
+
     public static ArrayList<String> getPlayerId(Context context, String name) {
         String [] files = context.fileList();
         ArrayList<String> players = new ArrayList<>();
@@ -61,6 +62,8 @@ public class PlayerAPI {
      * @return
      */
     public static String getPlayerId(Context context, String playerName, String teamName) {
+        String [] files  = context.fileList();
+
         return "";
 
     }

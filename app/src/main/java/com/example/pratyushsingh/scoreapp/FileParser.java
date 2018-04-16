@@ -6,24 +6,23 @@ public class FileParser {
     public static final int TEAM_ID = 0;
 
     public static String parseID(String contentsOfFile, int itemToParse) {
-        if(itemToParse == PLAYER_ID) {
-            String playerID = getPlayerId(contentsOfFile);
+        String playerID = getID(contentsOfFile, "PLAYER ID: ");
+        String teamID = getID(contentsOfFile, "TEAM ID: ");
 
-            return playerID;
-        }
 
         return "";
     }
 
-    private static String getPlayerId(String contentsOfFile) {
-        String [] playerData = contentsOfFile.split("\n");
+    private static String getID(String contentsOfFile, String key) {
+        String[] playerData = contentsOfFile.split("\n");
         String id = "";
 
-        for(int i = 0; i < playerData.length; i++) {
-            String [] line = playerData[i].split(":");
-            if(line[0].equals("PLAYER ID")) {
+        for (int i = 0; i < playerData.length; i++) {
+            String[] line = playerData[i].split(":");
+            if (line[0].equals(key)) {
                 try {
                     id = line[0].trim();
+
                     return id;
 
                 } catch (IndexOutOfBoundsException e) {
@@ -38,4 +37,5 @@ public class FileParser {
 
         return id;
     }
+
 }
