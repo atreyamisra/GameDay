@@ -1,8 +1,9 @@
-package com.example.pratyushsingh.scoreapp
+package com.gameday.core;
 
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
+import com.gameday.core.backend.core.R
 
 import kotlinx.android.synthetic.main.activity_biography.*
 

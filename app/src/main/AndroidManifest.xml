@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.pratyushsingh.scoreapp">
+    package="com.gameday.core.backend.core">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -19,12 +19,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Biography"
+            android:name="com.gameday.core.Biography"
             android:label="@string/title_activity_biography"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".PlayersActivity" />
+        <activity android:name=".PlayersActivity" android:exported="true"/>
     </application>
-
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
 
 </manifest>
