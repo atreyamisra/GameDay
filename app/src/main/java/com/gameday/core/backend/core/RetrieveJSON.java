@@ -10,6 +10,7 @@ import java.net.URL;
 public class RetrieveJSON {
     private static final String PLAYER_DATA_URL = "http://data.nba.net/10s/prod/v1/2017/players.json";
     private static final String TEAM_DATA_URL = "http://data.nba.net/prod/v1/2017/teams.json";
+    private static final String TEAM_LEADERS_URL = "http://data.nba.net/data/10s/prod/v1/2017/teams/";
     private static final String PLAYER_PROFILE = "http://data.nba.net/data/10s/prod/v1/2017/players/";
     private static final String NBA = "standard";
 
@@ -56,6 +57,10 @@ public class RetrieveJSON {
 
     public static String getPlayerProfile(String playerId) {
         return PLAYER_PROFILE + playerId + "_profile.json";
+    }
+
+    public static String getTeamLeadersUrl(String teamId) {
+        return TEAM_LEADERS_URL + teamId + "/leaders.json";
     }
 
 

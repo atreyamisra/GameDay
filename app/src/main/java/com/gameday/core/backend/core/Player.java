@@ -9,8 +9,10 @@ package com.gameday.core.backend.core;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.Toast;
+
+import com.gameday.core.backend.core.AsyncResponse.AsyncResponse;
+import com.gameday.core.backend.util.FileParser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,11 +22,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.PriorityQueue;
-
-import com.gameday.core.backend.core.AsyncResponse.*;
-import com.gameday.core.backend.util.*;
+import java.util.HashSet;
 
 
 
@@ -39,7 +37,7 @@ public class Player {
     public AsyncResponse delegate;
 
     /**
-     * @TODO: Add more modes here
+     * Todo: Add more modes here
      * Based on the appropriate "mode", the relevant data is retrieved, formatted, and returned to
      * the caller
      */
@@ -49,10 +47,10 @@ public class Player {
      * Queries the file system and the API to get the top 20 players by scoring average. This method
      * is a wrapper method and uses the PlayerStatistics class to get the top 20 players and notifies
      * Main UI thread via the AsyncResponse Interface.
-     * @param context
-     * @TODO add more methods needed
+     * param context
+     * Todo: add more methods needed
      */
-    public static void getTopTwenty(Context context) {
+    public void getTopTwenty(Context context) {
         this.context = context;
 
         PlayerStatistics playerStatistics = new PlayerStatistics(MODE_TWENTY);
@@ -95,17 +93,19 @@ public class Player {
         this.team = team;
     }
 
-    /** Sets canonical name **/
+    /** Gets canonical name **/
     public String getTeam() {
         return team;
     }
 
     /** Gets canonical name **/
+    @Deprecated
     public ArrayList<Player> getTopTwentyPlayers() {
         return topTwentyPlayers;
     }
 
     /** Sets canonical name **/
+    @Deprecated
     public void setTopTwentyPlayers(ArrayList<Player> topTwentyPlayers) {
         this.topTwentyPlayers = topTwentyPlayers;
     }
@@ -128,197 +128,221 @@ public class Player {
     /**
      * AsyncTask class that queries the file system and API to returns a Player object to the UI
      */
-    private class PlayerStatistics extends AsyncTask<String, Player, Player> {
-        private ArrayList<Player> topTwentyPlayers = new ArrayList<>();
-        private String mode;
+        private class PlayerStatistics extends AsyncTask<String, Player, Player> {
+            private ArrayList<Player> topTwentyPlayers = new ArrayList<>();
+            private String mode;
 
-        /**
-         * Constructor for the inner class that recieves the mode which signifies what data needs to
-         * be retrieved
-         * @param mode
-         */
-        public PlayerStatistics(String mode) {
-            this.mode = mode;
-        }
+            /**
+             * Constructor for the inner class that recieves the mode which signifies what data needs to
+             * be retrieved
+             * @param  mode
+             */
+            public PlayerStatistics(String mode) {
+                this.mode = mode;
+            }
 
 
-        @Override
-        /**
-         * @Todo: Add specialized messages based on each mode?
-         */
-        protected void onPreExecute() {
-            Toast.makeText(context, "Loading...", Toast.LENGTH_SHORT).show();
-        }
+            @Override
+            /**
+             * @Todo: Add specialized messages based on each mode?
+             */
+            protected void onPreExecute() {
+                Toast.makeText(context, "Loading...", Toast.LENGTH_SHORT).show();
+            }
 
-        @Override
-        /**
-         * Depending on mode passed by the caller, the appropriate function is called and after the
-         * execution the result is passed back to the caller
-         */
-        protected Player doInBackground(String... strings) {
-        if(mode.equals(Player.MODE_TWENTY)) {
-            topTwentyPlayers();
-        }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Player player) {
+            @Override
+            /**
+             * Depending on mode passed by the caller, the appropriate function is called and after the
+             * execution the result is passed back to the caller
+             */
+            protected Player doInBackground(String... strings) {
             if(mode.equals(Player.MODE_TWENTY)) {
-                delegate.processFinish(topTwentyPlayers);
+                topTwentyPlayers();
             }
-        }
-
-        private void test() {
-            String[] files = context.fileList();
-            for (int i = 0; i < files.length; i++) {
-                try {
-                    FileInputStream file = context.openFileInput(files[i]);
-                    int content;
-                    StringBuilder stringBuilder = new StringBuilder();
-                    while ((content = file.read()) != -1) {
-                        stringBuilder.append((char) content);
-                        // convert to char and display it
-
-                    }
-
-                    System.out.println(stringBuilder.toString());
-
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-
-        @TargetApi(24)
-        private void topTwentyPlayers() {
-            //test();
-            String[] files = getContext().fileList();
-            ArrayList<Player> topTwentyQueue = new ArrayList<>();
-
-            for(int i = 0; i < files.length; i++) {
-                try {
-                    FileInputStream file = context.openFileInput(files[i]);
-                    StringBuilder contentsOfFileTemp = new StringBuilder();
-                    int content;
-                    while((content = file.read()) != -1) {
-                         contentsOfFileTemp.append((char) content);
-
-                    }
-
-                    String contentsOfFile = contentsOfFileTemp.toString();
-                    Player player = new Player();
-
-                    String playerId = FileParser.parseID(contentsOfFile, FileParser.PLAYER_ID);
-                    String name = FileParser.parseID(contentsOfFile, FileParser.PLAYER_NAME);
-                    String position = FileParser.parseID(contentsOfFile, FileParser.POSITION);
-                    String biography = FileParser.parseID(contentsOfFile, FileParser.BIOGRAPHY);
-                    String teamID = FileParser.parseID(contentsOfFile, FileParser.TEAM_ID);
-                    String teamName = getTeamName(teamID);
-
-                    String jsonData = RetrieveJSON.getJSON(RetrieveJSON.getPlayerProfile(playerId));
-                    JSONObject jsonObject = new JSONObject(jsonData);
-                    String pointsPerGame = parsePointsPerGame(jsonObject);
-
-                    player.setBiography(biography);
-                    player.setName(name);
-                    player.setPosition(position);
-                    player.setTeam(teamName);
-                    player.setPointsPerGame(pointsPerGame);
-
-                    topTwentyQueue.add(player);
-                }
-
-                catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch(JSONException e) {
-                    e.printStackTrace();
-                } catch(Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-
-           topTwentyQueue.sort(new Comparator<Player>() {
-               @Override
-               public int compare(Player a, Player b) {
-                   double ppgA = Double.parseDouble(a.getPointsPerGame());
-                   double ppgB = Double.parseDouble(b.getPointsPerGame());
-
-                   return Double.compare(ppgA, ppgB);
-               }
-           });
-
-            for(int i = 0; i < 20; i++) {
-                Player temp = topTwentyQueue.get(i);
-                topTwentyPlayers.add(temp);
-            }
-        }
-
-        private String parsePointsPerGame(JSONObject playerProfileData) {
-            try {
-                return playerProfileData.getJSONObject("league").
-                        getJSONObject(RetrieveJSON.getNBA()).getJSONObject("stats").
-                        getJSONObject("latest").get("ppg").toString();
-            } catch(JSONException e) {
-                e.printStackTrace();
-
                 return null;
             }
 
+            @Override
+            protected void onPostExecute(Player player) {
+                if(mode.equals(Player.MODE_TWENTY)) {
+                    delegate.processFinish(topTwentyPlayers);
+                }
+            }
 
-        }
 
-        private String getTeamName(String teamId) {
-            String jsonData = RetrieveJSON.getJSON(RetrieveJSON.getTeamDataUrl());
-            try {
-                JSONObject jsonObject = new JSONObject(jsonData);
-                JSONArray teamData = jsonObject.getJSONObject("league").getJSONArray(RetrieveJSON.getNBA());
+            @TargetApi(24)
+            /**
+             * Goes through the NBA teams and retrieves the data for the top scorer for each player
+             * TODO: Sort the players, I have been having trouble with the Comparator API
+             */
+            private void topTwentyPlayers() {
+                String[] files = getContext().fileList();
+                ArrayList<Player> topTwentyQueue = new ArrayList<>();
+                HashSet<String> teamsVisited = new HashSet<>();
 
-                String id;
-                String teamName;
+                for(int i = 0; i < files.length && topTwentyQueue.size() < 30; i++) {
+                    try {
+                        FileInputStream file = context.openFileInput(files[i]);
+                        StringBuilder contentsOfFileTemp = new StringBuilder();
+                        int content;
+                        while((content = file.read()) != -1) {
+                             contentsOfFileTemp.append((char) content);
 
-                for(int i = 0; i < teamData.length(); i++) {
-                    JSONObject teamJSON = teamData.getJSONObject(i);
-
-                    if(teamJSON.get("isNBAFranchise").toString().equalsIgnoreCase("true")) {
-                        id = getInformation(teamJSON, "teamId");
-                        if(teamId.equalsIgnoreCase(id)) {
-                            teamName = getInformation(teamJSON, "fullName");
-
-                            return teamName;
                         }
 
+                        String contentsOfFile = contentsOfFileTemp.toString();
+                        Player player = new Player();
+
+                        String teamID = FileParser.parseID(contentsOfFile, FileParser.TEAM_ID);
+
+                        //if a team hasn't been visited yet, then parse the relevant data
+                        if(!teamsVisited.contains(teamID)) {
+                            teamsVisited.add(teamID);
+                            String teamName = getTeamName(teamID);
+
+                            if (teamName.length() > 0) { //safety checks
+                                String jsonData = RetrieveJSON.getJSON(RetrieveJSON.getTeamLeadersUrl(teamID));
+                                JSONObject jsonObject = new JSONObject(jsonData);
+
+                                String ppgLeaderStats = ppgLeaderForTeam(jsonObject);
+
+                                if (!ppgLeaderStats.equals("NULL")) {
+                                    JSONObject ppgLeaderStatsJSON = new JSONObject((ppgLeaderStats));
+                                    String playerId = ppgLeaderStatsJSON.get("personId").toString();
+                                    String ppg = ppgLeaderStatsJSON.get("value").toString();
+
+                                    FileInputStream playerFile = context.openFileInput(playerId);
+                                    StringBuilder playerFileContents = new StringBuilder();
+                                    int info;
+                                    while ((info = playerFile.read()) != -1) {
+                                        playerFileContents.append((char) info);
+
+                                    }
+
+                                    String playerFileData = playerFileContents.toString();
+
+                                    String name = FileParser.parseID(playerFileData, FileParser.PLAYER_NAME);
+                                    String position = FileParser.parseID(playerFileData, FileParser.POSITION);
+                                    String biography = FileParser.parseID(playerFileData, FileParser.BIOGRAPHY);
+
+                                    //create player object
+                                    player.setBiography(biography);
+                                    player.setName(name);
+                                    player.setPosition(position);
+                                    player.setTeam(teamName);
+                                    player.setPointsPerGame(ppg);
+
+                                    topTwentyQueue.add(player);
+                                    playerFile.close();
+                                }
+
+                            }
+                        }
+
+                        file.close();
+                    }
+
+                    catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch(JSONException e) {
+                        e.printStackTrace();
+                    } catch(Exception e) {
+                        e.printStackTrace();
                     }
                 }
 
-            } catch (JSONException e) {
-                e.printStackTrace();
+
+                for(int i = 0; i < 20; i++) {
+                    Player temp = topTwentyQueue.get(i);
+                    topTwentyPlayers.add(temp);
+                }
             }
 
-            return "";
+            private String parsePointsPerGame(JSONObject playerProfileData) {
+                try {
+                    JSONArray jsonArray = playerProfileData.getJSONObject("league").
+                            getJSONObject(RetrieveJSON.getNBA()).getJSONObject("stats").
+                            getJSONObject("l atest").getJSONArray("ppg");
 
-        }
+                    if(jsonArray.length() > 0) {
+                        return jsonArray.get(0).toString();
+                    } else {
+                        return "NULL";
+                    }
 
-        private String getInformation(JSONObject JSON, String field) {
-            String parameter;
-            try {
-                parameter = JSON.get(field).toString();
-            } catch (IndexOutOfBoundsException e) {
-                parameter = null;
-            } catch (JSONException e) {
-                parameter = null;
+                } catch(JSONException e) {
+                    e.printStackTrace();
+
+                    return null;
+                }
+
             }
 
-            return parameter;
-        }
+            private String ppgLeaderForTeam(JSONObject teamLeadersStats) {
+                try {
+                    JSONArray jsonArray = teamLeadersStats.getJSONObject("league").getJSONObject(RetrieveJSON.getNBA()).
+                            getJSONArray("ppg");
 
-    }
+                    if(jsonArray.length() > 0) {
+                        return jsonArray.get(0).toString();
+                    } else {
+                        return "NULL";
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+
+                    return "";
+                }
+            }
+
+            private String getTeamName(String teamId) {
+                String jsonData = RetrieveJSON.getJSON(RetrieveJSON.getTeamDataUrl());
+                try {
+                    JSONObject jsonObject = new JSONObject(jsonData);
+                    JSONArray teamData = jsonObject.getJSONObject("league").getJSONArray(RetrieveJSON.getNBA());
+
+                    String id;
+                    String teamName;
+
+                    for(int i = 0; i < teamData.length(); i++) {
+                        JSONObject teamJSON = teamData.getJSONObject(i);
+
+                        if(teamJSON.get("isNBAFranchise").toString().equalsIgnoreCase("true")) {
+                            id = getInformation(teamJSON, "teamId");
+                            if(teamId.equalsIgnoreCase(id)) {
+                                teamName = getInformation(teamJSON, "fullName");
+
+                                return teamName;
+                            }
+
+                        }
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                return "";
+
+            }
+
+            private String getInformation(JSONObject JSON, String field) {
+                String parameter;
+                try {
+                    parameter = JSON.get(field).toString();
+                } catch (IndexOutOfBoundsException e) {
+                    parameter = null;
+                } catch (JSONException e) {
+                    parameter = null;
+                }
+
+                return parameter;
+            }
+
+        }
 
 
 

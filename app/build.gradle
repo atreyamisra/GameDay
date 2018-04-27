@@ -20,6 +20,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
+    }
+}
+
+repositories {
+    mavenCentral()
 }
 
 dependencies {
@@ -32,8 +40,10 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     implementation files('libs/json-simple-1.1.jar')
-
     implementation "android.arch.persistence.room:runtime:$rootProject.roomVersion"
     annotationProcessor "android.arch.persistence.room:compiler:$rootProject.roomVersion"
     androidTestImplementation "android.arch.persistence.room:testing:$rootProject.roomVersion"
+    implementation 'org.junit.jupiter:junit-jupiter-api:5.1.1'
+    implementation files('libs/mockito-all-2.0.2-beta.jar')
+    implementation 'junit:junit:4.12'
 }
