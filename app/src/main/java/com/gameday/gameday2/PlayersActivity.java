@@ -1,57 +1,69 @@
 package com.gameday.gameday2;
 
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.PagerTabStrip;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.Toast;
 
-import java.util.ArrayList;
+public class PlayersActivity extends AppCompatActivity {
+    FragmentPagerAdapter adapterViewPager;
 
-public class PlayersActivity extends AppCompatActivity implements AsyncResponse {
-    ListView lvPlayers;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        RetrieveData retrieveData = new RetrieveData(this);
-//        retrieveData.execute();
         setContentView(R.layout.activity_players);
-        lvPlayers = (ListView) findViewById(R.id.lv_players);
-        Player player = new Player();
-        player.delegate = this;
-        player.getTopTwenty(getApplicationContext());
 
-        // Find the toolbar view inside the activity layout
+        ViewPager vpPager = (ViewPager) findViewById(R.id.vpPager);
+        adapterViewPager = new MyPagerAdapter(getSupportFragmentManager());
+        vpPager.setAdapter(adapterViewPager);
+
+        // Give the TabLayout the ViewPager
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
+        tabLayout.setupWithViewPager(vpPager);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        // Sets the Toolbar to act as the ActionBar for this Activity window.
-        // Make sure the toolbar exists in the activity and is not null
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-
-//        getSupportActionBar().setLogo(R.drawable.toolbar_image);
-//        getSupportActionBar().setDisplayUseLogoEnabled(true);
-
-        lvPlayers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (adapterView.getSelectedItem() != null ) {
-                    Log.d("PLAYER CLICKED: ", adapterView.getSelectedItem().toString());
-                }
-            }
-        });
     }
 
-    @Override
-    public void processFinish(ArrayList<?> response) {
-        Player[] players = new Player[20];
-        for(int i = 0; i < response.size(); i++) {
-            Player player = (Player) response.get(i);
-            players[i] = player;
 
+    public static class MyPagerAdapter extends FragmentPagerAdapter {
+        private static int NUM_ITEMS = 2;
+
+        public MyPagerAdapter(FragmentManager fragmentManager) {
+            super(fragmentManager);
         }
-        lvPlayers.setAdapter(new PlayersListViewAdapter(this, players));
+
+        // Returns total number of pages
+        @Override
+        public int getCount() {
+            return NUM_ITEMS;
+        }
+
+        // Returns the fragment to display for that page
+        @Override
+        public Fragment getItem(int position) {
+            switch (position) {
+                case 0: // Fragment # 0 - This will show FirstFragment
+                    return CurrentGamesFragment.newInstance(0, "Page # 1");
+                case 1: // Fragment # 0 - This will show FirstFragment different title
+                    return PlayerFragment.newInstance(1, "Page # 2");
+                default:
+                    return null;
+            }
+        }
+
+        // Returns the page title for the top indicator
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return "Page " + position;
+        }
 
     }
 }
