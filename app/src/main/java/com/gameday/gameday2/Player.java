@@ -30,8 +30,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-
-
 public class Player {
     private String name;
     private String team;
@@ -184,7 +182,6 @@ public class Player {
                 delegate.processFinish(topTwentyPlayers);
             }
         }
-
 
         @TargetApi(24)
         /**
@@ -399,7 +396,4 @@ public class Player {
             return split[split.length - 1];
         return split[1] + "/" + split[0];
     }
-
-
-
 }
