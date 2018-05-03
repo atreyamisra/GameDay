@@ -35,7 +35,7 @@
         app:tabMaxWidth="0dp"
         app:tabGravity="fill"
         app:tabMode="fixed"
-        android:backgroundTint="@color/colorPrimary"/>
+        android:background="@color/colorPrimary"/>
 
 
 </LinearLayout>
