@@ -2,25 +2,16 @@ package com.gameday.gameday2;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.os.AsyncTask;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashSet;
 
 
@@ -91,9 +82,6 @@ public class RetrieveData extends AsyncTask<Void, Void, String> {
             e.printStackTrace();
         }
     }
-
-
-
 
     private void populateTeams() {
         String jsonData = RetrieveJSON.getJSON(RetrieveJSON.getTeamDataUrl());
@@ -203,8 +191,6 @@ public class RetrieveData extends AsyncTask<Void, Void, String> {
         }
 
     }
-
-
 
     private String getInformation(JSONObject JSON, String field) {
         String parameter;
@@ -367,8 +353,6 @@ public class RetrieveData extends AsyncTask<Void, Void, String> {
         populatePlayer();
         //test();
         //populateTeams();
-
-
         return "";
     }
 
