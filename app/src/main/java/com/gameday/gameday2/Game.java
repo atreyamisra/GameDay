@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -24,7 +25,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class Game {
+public class Game implements Serializable {
     private static String currentDate = "";
     private String gameId = "";
     private String vTeamId = "";
@@ -37,8 +38,8 @@ public class Game {
     private String visitingTeam = "";
     private String homeTeamA = "";
     private String visitingTeamA = "";
-    private Bitmap hTeamLogo;
-    private Bitmap vTeamLogo;
+    private SerialBitmap hTeamLogo;
+    private SerialBitmap vTeamLogo;
     private boolean isActive = false;
 
     public static AsyncResponse delegate;
@@ -157,19 +158,19 @@ public class Game {
         this.visitingTeamA = visitingTeamA;
     }
 
-    public Bitmap gethTeamLogo() {
+    public SerialBitmap gethTeamLogo() {
         return hTeamLogo;
     }
 
-    public void sethTeamLogo(Bitmap hTeamLogo) {
+    public void sethTeamLogo(SerialBitmap hTeamLogo) {
         this.hTeamLogo = hTeamLogo;
     }
 
-    public Bitmap getvTeamLogo() {
+    public SerialBitmap getvTeamLogo() {
         return vTeamLogo;
     }
 
-    public void setvTeamLogo(Bitmap vTeamLogo) {
+    public void setvTeamLogo(SerialBitmap vTeamLogo) {
         this.vTeamLogo = vTeamLogo;
     }
 
@@ -232,8 +233,8 @@ public class Game {
                     }
                     game.setHomeTeamA(hTeamAb);
                     game.setVisitingTeamA(vTeamAb);
-                    game.sethTeamLogo(loadImage(hTeamAb));
-                    game.setvTeamLogo(loadImage(vTeamAb));
+                    game.sethTeamLogo(new SerialBitmap(loadImage(hTeamAb)));
+                    game.setvTeamLogo(new SerialBitmap(loadImage(vTeamAb)));
                     game.setIsActive(Boolean.getBoolean(_isActive));
 
                     String visitingTeam = teamName(vTeamId);

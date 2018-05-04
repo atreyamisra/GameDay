@@ -25,13 +25,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 
-public class Player implements Comparable<Player> {
+public class Player implements Comparable<Player>, Serializable {
     private String name;
     private String team;
     private String biography;
