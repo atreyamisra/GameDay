@@ -28,9 +28,10 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 
-public class Player {
+public class Player implements Comparable<Player> {
     private String name;
     private String team;
     private String biography;
@@ -40,7 +41,6 @@ public class Player {
     private Context context;
     private ArrayList<Player> topTwentyPlayers = new ArrayList<>();
     public AsyncResponse delegate;
-
 
     /**
      * Todo: Add more modes here
@@ -137,6 +137,11 @@ public class Player {
     /** Gets canonical name **/
     private Context getContext() {
         return context;
+    }
+
+    @Override
+    public int compareTo(Player other) {
+        return (int)(Double.parseDouble(this.pointsPerGame) - Double.parseDouble(other.pointsPerGame));
     }
 
     /**
@@ -268,11 +273,8 @@ public class Player {
                 }
             }
 
-
-            for(int i = 0; i < 20; i++) {
-                Player temp = topTwentyQueue.get(i);
-                topTwentyPlayers.add(temp);
-            }
+            Collections.sort(topTwentyQueue, Collections.reverseOrder());
+            topTwentyPlayers.addAll(topTwentyQueue);
         }
 
         private String parsePointsPerGame(JSONObject playerProfileData) {
@@ -356,6 +358,7 @@ public class Player {
 
             return parameter;
         }
+
 
     }
 

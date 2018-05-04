@@ -31,11 +31,11 @@ public class PlayerFragment extends Fragment implements AsyncResponse {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        RetrieveData retrieveData = new RetrieveData(getContext());
-        retrieveData.execute();
-        Player player = new Player();
-        player.delegate = this;
-        player.getTopTwenty(getContext());
+        //RetrieveData retrieveData = new RetrieveData(getContext());
+        //retrieveData.execute();
+       Player player = new Player();
+       player.delegate = this;
+       player.getTopTwenty(getContext());
     }
 
     // Inflate the view for the fragment based on layout XML
@@ -64,7 +64,7 @@ public class PlayerFragment extends Fragment implements AsyncResponse {
 
     @Override
     public void processFinish(ArrayList<?> response) {
-        Player[] players = new Player[20];
+        Player[] players = new Player[response.size()];
         for(int i = 0; i < response.size(); i++) {
             Player player = (Player) response.get(i);
             players[i] = player;

@@ -10,19 +10,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 public class GameRecyclerViewAdapter extends RecyclerView.Adapter<GameRecyclerViewAdapter.ViewHolder>{
 
     private static final String TAG= "RecyclerViewAdapter";
-    private ArrayList<String> names = new ArrayList<>();
-    private ArrayList<String> imageURLs = new ArrayList<>();
+    private Game[] games;
     Context context;
 
-    public GameRecyclerViewAdapter(Context context, ArrayList<String> names, ArrayList<String> imageUrls) {
+    public GameRecyclerViewAdapter(Context context, Game[] games) {
         this.context = context;
-        this.names = names;
-        this.imageURLs = imageUrls;
+        this.games = games;
     }
 
     @Override
@@ -34,14 +30,24 @@ public class GameRecyclerViewAdapter extends RecyclerView.Adapter<GameRecyclerVi
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.tvTeam1Name.setText(names.get(position));
-        holder.tvTeam2Name.setText(names.get(position));
+        holder.tvTeam1Name.setText(games[position].getHomeTeam());
+        holder.ivTeam1.setImageBitmap(games[position].gethTeamLogo());
+        holder.tvTeam1Score.setText(games[position].getHscore());
+
+        holder.tvTeam2Name.setText(games[position].getVisitingTeam());
+        holder.ivTeam2.setImageBitmap(games[position].getvTeamLogo());
+        holder.tvTeam2Score.setText(games[position].getvScore());
+        holder.tvTime.setText(games[position].getClock());
+
+        if (games[position].getIsActive()) {
+            holder.tvQuarter.setText(games[position].getPeriod());
+        }
 
     }
 
     @Override
     public int getItemCount() {
-        return names.size();
+        return games.length;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

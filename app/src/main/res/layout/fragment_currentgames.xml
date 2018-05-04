@@ -54,7 +54,6 @@
                         android:layout_marginBottom="10dp"
                         android:autoSizeMaxTextSize="15sp"
                         android:autoSizeMinTextSize="8sp"
-                        android:text="Wizards"
                         android:textAlignment="center"
                         android:textSize="10sp"
                         tools:targetApi="o" />
@@ -63,8 +62,7 @@
                         android:id="@+id/iv_team_1"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        android:scaleType="centerCrop"
-                        android:src="@mipmap/ic_launcher" />
+                        android:scaleType="centerCrop"/>
 
                     <TextView
                         android:id="@+id/tv_score_team_1"
@@ -73,7 +71,6 @@
                         android:layout_marginTop="10dp"
                         android:autoSizeMaxTextSize="25sp"
                         android:autoSizeMinTextSize="8sp"
-                        android:text="32"
                         android:textAlignment="center"
                         tools:targetApi="o" />
                 </LinearLayout>
@@ -92,7 +89,6 @@
                         android:layout_height="wrap_content"
                         android:autoSizeMaxTextSize="6sp"
                         android:autoSizeMinTextSize="4sp"
-                        android:text="4:34"
                         android:textAlignment="center"
                         android:textSize="8sp" />
 
@@ -102,7 +98,6 @@
                         android:layout_height="wrap_content"
                         android:autoSizeMaxTextSize="6sp"
                         android:autoSizeMinTextSize="4sp"
-                        android:text="3rd quarter"
                         android:textAlignment="center"
                         android:textSize="8sp" />
                 </LinearLayout>
@@ -122,7 +117,6 @@
                         android:layout_marginBottom="10dp"
                         android:autoSizeMaxTextSize="15sp"
                         android:autoSizeMinTextSize="8sp"
-                        android:text="Warriors"
                         android:textAlignment="center"
                         android:textSize="10sp"
                         tools:targetApi="o" />
@@ -131,8 +125,7 @@
                         android:id="@+id/iv_team_2"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        android:scaleType="centerCrop"
-                        android:src="@mipmap/ic_launcher" />
+                        android:scaleType="centerCrop" />
 
                     <TextView
                         android:id="@+id/tv_score_team_2"
@@ -141,7 +134,6 @@
                         android:layout_marginTop="10dp"
                         android:autoSizeMaxTextSize="25sp"
                         android:autoSizeMinTextSize="8sp"
-                        android:text="32"
                         android:textAlignment="center"
                         tools:targetApi="o" />
                 </LinearLayout>
