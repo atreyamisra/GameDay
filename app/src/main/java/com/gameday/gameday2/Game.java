@@ -1,5 +1,8 @@
 package com.gameday.gameday2;
 
+import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -8,6 +11,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -15,7 +25,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class Game {
+public class Game implements Serializable {
     private static String currentDate = "";
     private String gameId = "";
     private String vTeamId = "";
@@ -26,11 +36,15 @@ public class Game {
     private String clock = "";
     private String homeTeam = "";
     private String visitingTeam = "";
-    public AsyncResponse delegate;
+    private String homeTeamA = "";
+    private String visitingTeamA = "";
+    private SerialBitmap hTeamLogo;
+    private SerialBitmap vTeamLogo;
+    private boolean isActive = false;
 
-    private List<Game> pastGame = new ArrayList<>();
-    private List<Game> currentGame = new ArrayList<>();
-    private List<Game> futureGame = new ArrayList<>();
+    public static AsyncResponse delegate;
+
+    private List<Game> totalGames = new ArrayList<>();
 
     public static String getDate() {
         Date todayDate = new Date();
@@ -77,7 +91,7 @@ public class Game {
     }
 
     public void setvScore(String _vscore) {
-        vScore = vScore;
+        vScore = _vscore;
     }
 
     public String getPeriod() {
@@ -104,7 +118,7 @@ public class Game {
         hTeamId = _hTeamId;
     }
 
-    public String getHomeTeamName() {
+    public String getHomeTeam() {
         return homeTeam;
     }
 
@@ -120,6 +134,46 @@ public class Game {
         return visitingTeam;
     }
 
+    public boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public String getHomeTeamA() {
+        return homeTeamA;
+    }
+
+    public void setHomeTeamA(String homeTeamA) {
+        this.homeTeamA = homeTeamA;
+    }
+
+    public String getVisitingTeamA() {
+        return visitingTeamA;
+    }
+
+    public void setVisitingTeamA(String visitingTeamA) {
+        this.visitingTeamA = visitingTeamA;
+    }
+
+    public SerialBitmap gethTeamLogo() {
+        return hTeamLogo;
+    }
+
+    public void sethTeamLogo(SerialBitmap hTeamLogo) {
+        this.hTeamLogo = hTeamLogo;
+    }
+
+    public SerialBitmap getvTeamLogo() {
+        return vTeamLogo;
+    }
+
+    public void setvTeamLogo(SerialBitmap vTeamLogo) {
+        this.vTeamLogo = vTeamLogo;
+    }
+
 
     private void execute() {
         GameStatistics gameStatistics = new GameStatistics();
@@ -128,8 +182,8 @@ public class Game {
 
     private class GameStatistics extends AsyncTask<Void, Void, Void> {
         private String url = "http://data.nba.net/data/10s/prod/v1/";
-        private String isActive = "";
 
+        @SuppressLint("NewApi")
         @Override
         protected Void doInBackground(Void... voids) {
             String json = RetrieveJSON.getJSON(url + Game.getDate() + "/scoreboard.json");
@@ -145,11 +199,12 @@ public class Game {
             try {
                 JSONObject jsonObject = new JSONObject(gameJSON);
                 JSONArray games = jsonObject.getJSONArray("games");
-                Game game = new Game();
+
 
                 for(int i = 0; i < games.length(); i++) {
+                    Game game = new Game();
                     JSONObject g = games.getJSONObject(i);
-                    isActive = g.get("isGameActivated").toString();
+                    String _isActive = g.get("isGameActivated").toString();
                     String startTime = g.get("startTimeUTC").toString();
                     Instant startTimeInstant = Instant.parse(startTime);
                     Instant currentTime = Instant.now();
@@ -159,7 +214,9 @@ public class Game {
                     String hTeamId = g.getJSONObject("hTeam").get("teamId").toString();
                     String vScore = g.getJSONObject("vTeam").get("score").toString();
                     String hscore = g.getJSONObject("hTeam").get("score").toString();
-                    String period = g.getJSONObject("period").get("current").toString();
+                    String period = "Q" + g.getJSONObject("period").get("current").toString();
+                    String hTeamAb = g.getJSONObject("hTeam").get("triCode").toString();
+                    String vTeamAb = g.getJSONObject("vTeam").get("triCode").toString();
                     String clock = g.get("clock").toString();
 
                     game.setGameId(gameId);
@@ -168,7 +225,17 @@ public class Game {
                     game.setvScore(vScore);
                     game.setHscore(hscore);
                     game.setPeriod(period);
-                    game.setClock(clock);
+
+                    if (clock.equals("")) {
+                        game.setClock("FINAL");
+                    } else {
+                        game.setClock(clock);
+                    }
+                    game.setHomeTeamA(hTeamAb);
+                    game.setVisitingTeamA(vTeamAb);
+                    game.sethTeamLogo(new SerialBitmap(loadImage(hTeamAb)));
+                    game.setvTeamLogo(new SerialBitmap(loadImage(vTeamAb)));
+                    game.setIsActive(Boolean.getBoolean(_isActive));
 
                     String visitingTeam = teamName(vTeamId);
                     String homeTeam = teamName(hTeamId);
@@ -185,12 +252,12 @@ public class Game {
                         game.setHomeTeam(" ");
                     }
 
-                    if(Boolean.getBoolean(isActive)) {
-                        currentGame.add(game);
-                    } else if(currentTime.isAfter(startTimeInstant)) {
-                        pastGame.add(game);
-                    } else {
-                        futureGame.add(game);
+                    if(totalGames.size() < 6 && !currentTime.isBefore(startTimeInstant)) {
+                        totalGames.add(game);
+                    }
+
+                    if (totalGames.size() == 6) {
+                        break;
                     }
 
                 }
@@ -243,6 +310,7 @@ public class Game {
             return parameter;
         }
 
+        @SuppressLint("NewApi")
         private void getPastGames() {
             for(int i = 1; i < 7; i++) {
                 String date = getPreviousDate(i);
@@ -256,6 +324,7 @@ public class Game {
             prevDay = prevDay * -1;
             final Calendar cal = Calendar.getInstance();
 
+            cal.add(Calendar.DATE, prevDay);
             String formattedDate = formatDate(cal.getTime());
 
             return formattedDate;
@@ -268,12 +337,26 @@ public class Game {
             return format;
         }
 
+        public Bitmap loadImage(String abbrev) {
+            Bitmap image = null;
+            URL baseURL = null;
+            try {
+                baseURL = new URL("http://i.cdn.turner.com/nba/nba/.element/img/1.0/teamsites/logos/teamlogos_500x500/");
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            try {
+                image = BitmapFactory.decodeStream((InputStream) new URL(baseURL + abbrev + ".png").getContent());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return image;
+        }
+
         @Override
         protected void onPostExecute(Void aVoid) {
-            ArrayList<ArrayList<Game>> gameData = new ArrayList<>();
-            delegate.processFinish(gameData);
+            ArrayList<Game> games = new ArrayList<>(totalGames);
+            delegate.processFinish(games);
         }
     }
-
-
 }

@@ -25,12 +25,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 
-public class Player {
+public class Player implements Comparable<Player>, Serializable {
     private String name;
     private String team;
     private String biography;
@@ -41,7 +43,6 @@ public class Player {
     private Context context;
     private ArrayList<Player> topTwentyPlayers = new ArrayList<>();
     public AsyncResponse delegate;
-
 
     /**
      * Todo: Add more modes here
@@ -148,6 +149,11 @@ public class Player {
         return context;
     }
 
+    @Override
+    public int compareTo(Player other) {
+        return (int)(Double.parseDouble(this.pointsPerGame) - Double.parseDouble(other.pointsPerGame));
+    }
+
     /**
      * AsyncTask class that queries the file system and API to returns a Player object to the UI
      */
@@ -245,7 +251,7 @@ public class Player {
 
                                 String name = FileParser.parseID(playerFileData, FileParser.PLAYER_NAME);
                                 String position = FileParser.parseID(playerFileData, FileParser.POSITION);
-                                String biography = loadBio(name);
+                                // String biography = loadBio(name);
 
                                 //create player object
                                 player.setBiography(biography);
@@ -277,11 +283,8 @@ public class Player {
                 }
             }
 
-
-            for(int i = 0; i < 20; i++) {
-                Player temp = topTwentyQueue.get(i);
-                topTwentyPlayers.add(temp);
-            }
+            Collections.sort(topTwentyQueue, Collections.reverseOrder());
+            topTwentyPlayers.addAll(topTwentyQueue);
         }
 
         private String parsePointsPerGame(JSONObject playerProfileData) {
@@ -365,6 +368,7 @@ public class Player {
 
             return parameter;
         }
+
 
     }
 

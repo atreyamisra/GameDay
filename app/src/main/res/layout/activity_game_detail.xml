@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".GameDetailActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:padding="6dp"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark">
+
+        <LinearLayout
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
+            android:weightSum="3">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                tools:ignore="Suspicious0dp">
+
+                <TextView
+                    android:id="@+id/tv_name_team_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="3dp"
+                    android:autoSizeMaxTextSize="15sp"
+                    android:autoSizeMinTextSize="8sp"
+                    android:textAlignment="center"
+                    android:textSize="10sp"
+                    android:textColor="@color/textLight"
+                    tools:targetApi="o" />
+
+                <ImageView
+                    android:id="@+id/iv_team_1"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:scaleType="centerCrop"
+                    android:src="@mipmap/ic_launcher"
+                    />
+
+                <TextView
+                    android:id="@+id/tv_score_team_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:autoSizeMaxTextSize="25sp"
+                    android:autoSizeMinTextSize="8sp"
+                    android:textAlignment="center"
+                    android:textColor="@color/textLight"
+                    tools:targetApi="o" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                tools:ignore="Suspicious0dp"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/tv_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:autoSizeMaxTextSize="6sp"
+                    android:autoSizeMinTextSize="4sp"
+                    android:textAlignment="center"
+                    android:textColor="@color/textLight"
+                    android:textSize="8sp" />
+
+                <TextView
+                    android:id="@+id/tv_quarter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:autoSizeMaxTextSize="6sp"
+                    android:autoSizeMinTextSize="4sp"
+                    android:textAlignment="center"
+                    android:textColor="@color/textLight"
+                    android:textSize="8sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                tools:ignore="Suspicious0dp">
+
+                <TextView
+                    android:id="@+id/tv_name_team_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="3dp"
+                    android:autoSizeMaxTextSize="15sp"
+                    android:autoSizeMinTextSize="8sp"
+                    android:textAlignment="center"
+                    android:textColor="@color/textLight"
+                    android:textSize="10sp"
+                    tools:targetApi="o" />
+
+                <ImageView
+                    android:id="@+id/iv_team_2"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:scaleType="centerCrop"
+                    android:src="@mipmap/ic_launcher" />
+
+                <TextView
+                    android:id="@+id/tv_score_team_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:autoSizeMaxTextSize="25sp"
+                    android:autoSizeMinTextSize="8sp"
+                    android:textColor="@color/textLight"
+                    android:textAlignment="center"
+                    tools:targetApi="o" />
+            </LinearLayout>
+        </LinearLayout>
+    </android.support.v7.widget.Toolbar>
+    
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:layout_below="@+id/toolbar"
+        android:weightSum="2">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/tv_top_scoring"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:fontFamily="@font/opensansregular"
+                android:text="Top Scoring Players"/>
+            <ListView
+                android:id="@+id/lv_head_to_head"
+                android:layout_below="@id/tv_top_scoring"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical"
+                tools:ignore="Suspicious0dp"/>
+        </RelativeLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:fontFamily="@font/opensansregular"
+            android:text="Most Recent Games"/>
+        <LinearLayout
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:weightSum="2"
+            android:orientation="horizontal">
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/tv_team_1_pg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:fontFamily="@font/opensanslight"
+                    android:text="Team 1 Name"/>
+                <ListView
+                    android:id="@+id/lv_home_games"
+                    android:layout_width="match_parent"
+                    android:layout_below="@id/tv_team_1_pg"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+                </ListView>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/tv_team_2_pg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:fontFamily="@font/opensanslight"
+                    android:text="Team 2 Name"/>
+                <ListView
+                    android:id="@+id/lv_visitor_games"
+                    android:layout_width="match_parent"
+                    android:layout_below="@id/tv_team_2_pg"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+                </ListView>
+            </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
+    
+    
+
+</RelativeLayout>

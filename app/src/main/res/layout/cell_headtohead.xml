@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:padding="10dp"
+    android:weightSum="5">
+
+    <ImageView
+        android:id="@+id/iv_player_1"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:src="@mipmap/ic_launcher"/>
+    <TextView
+        android:id="@+id/tv_player_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="40sp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:fontFamily="@font/opensanslight"
+        android:text="54"/>
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center">
+        <ImageView
+            android:layout_width="2dp"
+            android:layout_height="50dp"
+            android:background="@color/colorSecondary"/>
+    </RelativeLayout>
+    <TextView
+        android:id="@+id/tv_player_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="40sp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:fontFamily="@font/opensanslight"
+        android:text="40"/>
+    <ImageView
+        android:id="@+id/iv_player_2"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:src="@mipmap/ic_launcher"/>
+
+</LinearLayout>

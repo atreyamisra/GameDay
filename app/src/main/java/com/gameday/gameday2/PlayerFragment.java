@@ -8,12 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 
 public class PlayerFragment extends Fragment implements AsyncResponse {
     // Store instance variables
     ListView lvPlayers;
+    ProgressBar pbLoading;
 
     // newInstance constructor for creating fragment with arguments
     public static PlayerFragment newInstance(int page, String title) {
@@ -29,11 +31,11 @@ public class PlayerFragment extends Fragment implements AsyncResponse {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        RetrieveData retrieveData = new RetrieveData(getContext());
-        retrieveData.execute();
-        Player player = new Player();
-        player.delegate = this;
-        player.getTopTwenty(getContext());
+        //RetrieveData retrieveData = new RetrieveData(getContext());
+        //retrieveData.execute();
+       Player player = new Player();
+       player.delegate = this;
+       player.getTopTwenty(getContext());
     }
 
     // Inflate the view for the fragment based on layout XML
@@ -52,18 +54,24 @@ public class PlayerFragment extends Fragment implements AsyncResponse {
             }
         });
 
+        // on some click or some loading we need to wait for...
+        pbLoading = (ProgressBar) view.findViewById(R.id.progress_bar);
+        pbLoading.setVisibility(ProgressBar.VISIBLE);
+
         return view;
 
     }
 
     @Override
     public void processFinish(ArrayList<?> response) {
-        Player[] players = new Player[20];
+        Player[] players = new Player[response.size()];
         for(int i = 0; i < response.size(); i++) {
             Player player = (Player) response.get(i);
             players[i] = player;
             Log.d("PLAYERS: ", player.getName());
         }
+        pbLoading.setVisibility(View.GONE);
         lvPlayers.setAdapter(new PlayersListViewAdapter(getContext(), players));
+
     }
 }

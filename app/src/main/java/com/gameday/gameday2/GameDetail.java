@@ -14,10 +14,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.Arrays;
 import java.util.HashSet;
 
 import static com.gameday.gameday2.Player.formatPlayerName;
@@ -27,6 +26,15 @@ public class GameDetail {
     private static String gameId = "";
     private static String gameDate = "";
     private GameDetailResults gameDetailResults = new GameDetailResults();
+    private HashSet<String> playoffTeams = new HashSet<>(Arrays.asList("celtics\n" +
+            "sixers\n" +
+            "raptors\n" +
+            "cavaliers\n" +
+            "warriors\n" +
+            "jazz\n" +
+            "rockets\n" +
+            "pelicans\n"));
+
 
     public static void getGameDetails(String _gameId, String _gameDate, Context context) {
         gameId = _gameId;
@@ -37,6 +45,7 @@ public class GameDetail {
     }
 
     private void execute(Context context) {
+
         InnerGameDetail innerGameDetail = new InnerGameDetail(gameId, gameDate, context);
         innerGameDetail.execute();
     }
@@ -44,7 +53,10 @@ public class GameDetail {
     private class InnerGameDetail extends AsyncTask<Void, Void, Void> {
         private String gameId;
         private String gameDate;
+        private ArrayList<Game> pastVGames = new ArrayList<>();
+        private ArrayList<Game> pastHGames = new ArrayList<>();
         private Context context;
+        private GameDetailResults gameDetailResults = new GameDetailResults();
 
         public InnerGameDetail(String gameId, String gameDate, Context context) {
             this.context = context;
@@ -62,8 +74,64 @@ public class GameDetail {
             return null;
         }
 
+        private ArrayList<Game> parseGameData(String gameJSON) {
+            try {
+                JSONObject jsonObject = new JSONObject(gameJSON);
+                JSONArray games = jsonObject.getJSONObject("league").getJSONArray("standard");
+                ArrayList<Game> pastGames = new ArrayList<>();
+
+                for (int j = games.length() - 1; j >= 0 && pastGames.size() < 3; j--) {
+                    Game game = new Game();
+
+                    JSONObject gameData = games.getJSONObject(j);
+
+                    String startTimeStr = gameData.getString("startTimeUTC");
+                    Instant startTime = Instant.parse(startTimeStr);
+                    Instant currentTime = Instant.now();
+                    if (startTime.isAfter(currentTime)) continue;
+
+                    String _gameId = gameData.getString("gameId");
+                    if (gameId.equals(_gameId)) continue;
+
+                    JSONObject playoffData = gameData.getJSONObject("playoffs");
+                    String vTeamId = playoffData.getJSONObject("vTeam").getString("teamId");
+                    String vTeamScore = playoffData.getJSONObject("vTeam").getString("score");
+
+                    String hTeamId = playoffData.getJSONObject("hTeam").getString("teamId");
+                    String hTeamScore = playoffData.getJSONObject("hTeam").getString("score");
+
+                    String vTeamName = teamName(vTeamId);
+                    String hTeamName = teamName(hTeamId);
+
+                    game.setHomeTeam(hTeamName);
+                    game.setVisitingTeam(vTeamName);
+                    game.setGameId(_gameId);
+                    game.sethTeamId(hTeamId);
+                    game.setvTeamId(vTeamId);
+                    game.setIsActive(false);
+                    game.setPeriod("");
+                    game.setHscore(hTeamScore);
+                    game.setvScore(vTeamScore);
+
+                    pastGames.add(game);
+
+                }
+
+                return pastGames;
+            }
+
+            catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+
+        }
+
         private ArrayList<Player> retrieveTeamData(JSONObject jsonObject, String side) throws JSONException, IOException {
             String teamId = jsonObject.getJSONObject(side).get("teamId").toString();
+            String teamName = getTeamName(teamId);
+
             JSONObject stats = jsonObject.getJSONObject("stats").getJSONObject(side);
             String highestPoints = stats.getJSONObject("leaders").getJSONObject("points").getString("value");
             JSONArray pointLeaders = stats.getJSONObject("leaders").getJSONObject("points").getJSONArray("players");
@@ -98,7 +166,7 @@ public class GameDetail {
 
             if(players.size() < 2) {
                 JSONArray allPlayers = jsonObject.getJSONArray("activePlayers");
-                for(int i = 0; i < allPlayers.length() && players.size() < 2; i++) {
+                for(int i = 0; i < allPlayers.length() && players.size() <= 2; i++) {
                     String tId = allPlayers.getJSONObject(i).getString("teamId");
                     if(!tId.equals(teamId)) continue;
 
@@ -126,6 +194,12 @@ public class GameDetail {
                 }
             }
 
+            if(side.equals("vTeam")) {
+                pastVGames = getPastGames(teamName);
+            }
+            else {
+                pastHGames = getPastGames(teamName);
+            }
 
             return players;
         }
@@ -151,12 +225,15 @@ public class GameDetail {
         }
 
         private void getBoxScore(String json) {
-            ArrayList<Player> visitingPlayers = new ArrayList<>();
-            ArrayList<Player> homePlayers = new ArrayList<>();
+            ArrayList<Player> visitingPlayers;
+            ArrayList<Player> homePlayers;
             try {
                 JSONObject jsonObject = new JSONObject(json);
                 visitingPlayers = retrieveTeamData(jsonObject, "vTeam");
                 homePlayers = retrieveTeamData(jsonObject, "hTeam");
+
+                gameDetailResults.setArrayLists(visitingPlayers, homePlayers);
+                gameDetailResults.setPastGames(pastVGames, pastHGames);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -165,29 +242,99 @@ public class GameDetail {
             }
         }
 
-        private void getPastGames() {
-            for(int i = 1; i < 7; i++) {
-                String date = getPreviousDate(i);
-                String json = RetrieveJSON.getJSON(url + date + "/scoreboard.json");
-                parseGameData(json);
+        private ArrayList<Game> getPastGames(String teamName) {
+            String url = "http://data.nba.net/data/10s/prod/v1/2017/teams/";
+            String team = "";
+            for(String t: playoffTeams) {
+                t = t.toLowerCase();
+                teamName = teamName.toLowerCase();
 
+                if(teamName.contains(t)) {
+
+                    team = t;
+                    break;
+                }
             }
+
+
+                String json = RetrieveJSON.getJSON(url + team + "/schedule.json");
+
+                return parseGameData(json);
+
         }
 
-        private String getPreviousDate(int prevDay) {
-            prevDay = prevDay * -1;
-            final Calendar cal = Calendar.getInstance();
 
-            String formattedDate = formatDate(cal.getTime());
+        private String teamName(String teamId) {
+            String jsonData = RetrieveJSON.getJSON(RetrieveJSON.getTeamDataUrl());
+            try {
+                JSONObject jsonObject = new JSONObject(jsonData);
+                JSONArray teamData = jsonObject.getJSONObject("league").getJSONArray(RetrieveJSON.getNBA());
 
-            return formattedDate;
+                String id;
+                String teamName;
+                for(int i = 0; i < teamData.length(); i++) {
+                    JSONObject teamJSON = teamData.getJSONObject(i);
+                    if(teamJSON.get("isNBAFranchise").toString().equalsIgnoreCase("true")) {
+                        id = getInformation(teamJSON, "teamId");
+                        if(teamId.equalsIgnoreCase(id)) {
+                            teamName = getInformation(teamJSON, "fullName");
+
+                            return teamName;
+                        }
+
+                    }
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return "";
+
         }
 
-        private String formatDate(Date date) {
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
-            String format = formatter.format(date);
+        private String getInformation(JSONObject JSON, String field) {
+            String parameter;
+            try {
+                parameter = JSON.get(field).toString();
+            } catch (IndexOutOfBoundsException e) {
+                parameter = null;
+            } catch (JSONException e) {
+                parameter = null;
+            }
 
-            return format;
+            return parameter;
+        }
+
+        private String getTeamName(String teamId) {
+            String jsonData = RetrieveJSON.getJSON(RetrieveJSON.getTeamDataUrl());
+            try {
+                JSONObject jsonObject = new JSONObject(jsonData);
+                JSONArray teamData = jsonObject.getJSONObject("league").getJSONArray(RetrieveJSON.getNBA());
+
+                String id;
+                String teamName;
+
+                for(int i = 0; i < teamData.length(); i++) {
+                    JSONObject teamJSON = teamData.getJSONObject(i);
+
+                    if(teamJSON.get("isNBAFranchise").toString().equalsIgnoreCase("true")) {
+                        id = getInformation(teamJSON, "teamId");
+                        if(teamId.equalsIgnoreCase(id)) {
+                            teamName = getInformation(teamJSON, "fullName");
+
+                            return teamName;
+                        }
+
+                    }
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return "";
+
         }
 
 
