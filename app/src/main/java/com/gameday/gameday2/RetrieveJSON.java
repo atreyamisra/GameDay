@@ -55,6 +55,12 @@ public class RetrieveJSON {
         return PLAYER_DATA_URL;
     }
 
+//    public static String getScoreBoardUrl(String date) {
+//
+//
+//        return url;
+//    }
+
     public static String getPlayerProfile(String playerId) {
         return PLAYER_PROFILE + playerId + "_profile.json";
     }
