@@ -36,6 +36,7 @@ public class Player {
     private String biography;
     private String position;
     private String pointsPerGame;
+    private String pointsScoredInGame;
     private Bitmap profilePhoto;
     private Context context;
     private ArrayList<Player> topTwentyPlayers = new ArrayList<>();
@@ -67,6 +68,14 @@ public class Player {
     /** Sets canonical name **/
     public void setBiography(String biography) {
         this.biography = biography;
+    }
+
+    public void setPointsScoredInGame(String pointsScoredInGame) {
+        this.pointsScoredInGame = pointsScoredInGame;
+    }
+
+    public String getPointsScoredInGame() {
+        return pointsScoredInGame;
     }
 
     /** Gets canonical name **/

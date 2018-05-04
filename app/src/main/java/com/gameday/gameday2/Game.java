@@ -255,9 +255,10 @@ public class Game {
         private String getPreviousDate(int prevDay) {
             prevDay = prevDay * -1;
             final Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.DATE, prevDay);
 
-            return cal.getTime().toString();
+            String formattedDate = formatDate(cal.getTime());
+
+            return formattedDate;
         }
 
         private String formatDate(Date date) {
