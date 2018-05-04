@@ -2,6 +2,8 @@ package com.gameday.gameday2;
 
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,19 +31,30 @@ public class GameRecyclerViewAdapter extends RecyclerView.Adapter<GameRecyclerVi
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, int
+            position) {
         holder.tvTeam1Name.setText(games[position].getHomeTeam());
-        holder.ivTeam1.setImageBitmap(games[position].gethTeamLogo());
+        holder.ivTeam1.setImageBitmap(games[position].gethTeamLogo().bitmap);
         holder.tvTeam1Score.setText(games[position].getHscore());
 
         holder.tvTeam2Name.setText(games[position].getVisitingTeam());
-        holder.ivTeam2.setImageBitmap(games[position].getvTeamLogo());
+        holder.ivTeam2.setImageBitmap(games[position].getvTeamLogo().bitmap);
         holder.tvTeam2Score.setText(games[position].getvScore());
         holder.tvTime.setText(games[position].getClock());
 
         if (games[position].getIsActive()) {
             holder.tvQuarter.setText(games[position].getPeriod());
         }
+
+        holder.cvGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("CLICKED", "I clicked a view holder");
+                Intent intent = new Intent(context, GameDetailActivity.class);
+                intent.putExtra("game", games[position]);
+                context.startActivity(intent);
+            }
+        });
 
     }
 
@@ -51,8 +64,6 @@ public class GameRecyclerViewAdapter extends RecyclerView.Adapter<GameRecyclerVi
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-
-
         TextView tvTeam1Name;
         TextView tvTeam2Name;
         ImageView ivTeam1;
@@ -61,6 +72,7 @@ public class GameRecyclerViewAdapter extends RecyclerView.Adapter<GameRecyclerVi
         TextView tvTeam2Score;
         TextView tvTime;
         TextView tvQuarter;
+        CardView cvGame;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -74,6 +86,8 @@ public class GameRecyclerViewAdapter extends RecyclerView.Adapter<GameRecyclerVi
 
             tvTime = itemView.findViewById(R.id.tv_time);
             tvQuarter = itemView.findViewById(R.id.tv_quarter);
+
+            cvGame = itemView.findViewById(R.id.cvGame);
         }
     }
 }

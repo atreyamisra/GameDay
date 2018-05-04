@@ -76,6 +76,7 @@ public class CurrentGamesFragment extends Fragment implements AsyncResponse {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         rvGames = view.findViewById(R.id.rv_games);
         rvGames.setLayoutManager(layoutManager);
+
     }
 
     @Override
@@ -89,11 +90,11 @@ public class CurrentGamesFragment extends Fragment implements AsyncResponse {
         Game trendingGame = (Game) response.get(0);
         tvTeam1Name.setText(trendingGame.getHomeTeam());
         tvTeam1Score.setText(trendingGame.getHscore());
-        ivTeam1.setImageBitmap(trendingGame.gethTeamLogo());
+        ivTeam1.setImageBitmap(trendingGame.gethTeamLogo().bitmap);
 
         tvTeam2Name.setText(trendingGame.getVisitingTeam());
         tvTeam2Score.setText(trendingGame.getvScore());
-        ivTeam2.setImageBitmap(trendingGame.getvTeamLogo());
+        ivTeam2.setImageBitmap(trendingGame.getvTeamLogo().bitmap);
 
         tvTime.setText(trendingGame.getClock());
         if (trendingGame.getIsActive()) {

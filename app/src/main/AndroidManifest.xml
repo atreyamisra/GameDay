@@ -11,7 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".PlayersActivity">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,6 +22,7 @@
             android:name=".PlayerDetailActivity"
             android:label="@string/title_activity_player_detail"
             android:theme="@style/AppTheme"></activity>
+        <activity android:name=".GameDetailActivity"></activity>
     </application>
 
 </manifest>

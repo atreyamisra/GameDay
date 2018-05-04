@@ -1,9 +1,12 @@
 package com.gameday.gameday2;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -57,7 +60,20 @@ class PlayersListViewAdapter extends BaseAdapter {
         CircleImageView ivProfilePhoto = (CircleImageView) vi.findViewById(R.id.iv_profile_photo);
         tvName.setText(data[position].getName());
         tvTeam.setText(data[position].getTeam());
-        ivProfilePhoto.setImageBitmap(data[position].getProfilePhoto());
+        ivProfilePhoto.setImageBitmap(data[position].getProfilePhoto().bitmap);
+
+        vi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("PLAYER CLICKED", data[position].getName());
+                Log.d("CLICKED", "I clicked a view holder");
+                Intent intent = new Intent(context, PlayerDetailActivity.class);
+                intent.putExtra("player", data[position]);
+                context.startActivity(intent);
+            }
+        });
+
+
         return vi;
     }
 }

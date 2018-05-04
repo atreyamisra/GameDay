@@ -25,19 +25,20 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 
-public class Player implements Comparable<Player> {
+public class Player implements Comparable<Player>, Serializable {
     private String name;
     private String team;
     private String biography;
     private String position;
     private String pointsPerGame;
-    private Bitmap profilePhoto;
+    private SerialBitmap profilePhoto;
     private Context context;
     private ArrayList<Player> topTwentyPlayers = new ArrayList<>();
     public AsyncResponse delegate;
@@ -84,11 +85,11 @@ public class Player implements Comparable<Player> {
         return position;
     }
 
-    public Bitmap getProfilePhoto() {
+    public SerialBitmap getProfilePhoto() {
         return profilePhoto;
     }
 
-    public void setProfilePhoto(Bitmap profilePhoto) {
+    public void setProfilePhoto(SerialBitmap profilePhoto) {
         this.profilePhoto = profilePhoto;
     }
 
@@ -244,13 +245,16 @@ public class Player implements Comparable<Player> {
                                 // String biography = loadBio(name);
 
                                 //create player object
-                                player.setBiography(biography);
+                                //player.setBiography(biography);
                                 player.setName(name);
+                                String bio = loadBio(player.name);
+                                bio = bio.replaceAll("\\[.*?\\]", "");
+                                player.setBiography(bio);
                                 player.setPosition(position);
                                 player.setTeam(teamName);
                                 player.setPointsPerGame(ppg);
                                 Bitmap profilePhoto = loadImage(player);
-                                player.setProfilePhoto(profilePhoto);
+                                player.setProfilePhoto(new SerialBitmap(profilePhoto));
 
                                 topTwentyQueue.add(player);
                                 playerFile.close();
@@ -362,7 +366,7 @@ public class Player implements Comparable<Player> {
 
     }
 
-    private String loadBio(String name) throws IOException {
+    public String loadBio(String name) throws IOException {
         Document doc = Jsoup.connect("https://en.wikipedia.org/wiki/" + name).get();
         Elements paragraphs = doc.select(".mw-content-ltr p");
         Element firstParagraph = paragraphs.first();
