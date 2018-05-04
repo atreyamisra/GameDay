@@ -8,6 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 /**
  * Created by aashimagarg on 4/26/18.
  */
@@ -52,7 +54,7 @@ class PlayersListViewAdapter extends BaseAdapter {
             vi = inflater.inflate(R.layout.cell_players, null);
         TextView tvName = (TextView) vi.findViewById(R.id.tv_name);
         TextView tvTeam = (TextView) vi.findViewById(R.id.tv_team);
-        ImageView ivProfilePhoto = (ImageView) vi.findViewById(R.id.iv_profile_photo);
+        CircleImageView ivProfilePhoto = (CircleImageView) vi.findViewById(R.id.iv_profile_photo);
         tvName.setText(data[position].getName());
         tvTeam.setText(data[position].getTeam());
         ivProfilePhoto.setImageBitmap(data[position].getProfilePhoto());

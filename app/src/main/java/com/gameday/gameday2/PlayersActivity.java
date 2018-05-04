@@ -18,18 +18,24 @@ public class PlayersActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_players);
-
-        ViewPager vpPager = (ViewPager) findViewById(R.id.vpPager);
-        adapterViewPager = new MyPagerAdapter(getSupportFragmentManager());
-        vpPager.setAdapter(adapterViewPager);
-
-        // Give the TabLayout the ViewPager
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
-        tabLayout.setupWithViewPager(vpPager);
-
+        // set up toolbar with logo
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        // set up view pager and tab bar
+        ViewPager vpPager = (ViewPager) findViewById(R.id.vpPager);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
+
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.toolbar_currentgames));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_players));
+
+        adapterViewPager = new MyPagerAdapter(getSupportFragmentManager());
+
+        vpPager.setAdapter(adapterViewPager);
+        vpPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(vpPager));
+        //tabLayout.setupWithViewPager(vpPager);
     }
 
 
