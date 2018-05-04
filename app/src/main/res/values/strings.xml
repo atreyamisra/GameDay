@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">GameDay</string>
+    <string name="title_activity_player_detail">PlayerDetailActivity</string>
 </resources>
