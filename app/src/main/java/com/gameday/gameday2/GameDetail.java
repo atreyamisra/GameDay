@@ -22,7 +22,7 @@ import java.util.HashSet;
 import static com.gameday.gameday2.Player.formatPlayerName;
 
 public class GameDetail {
-    public AsyncResponse delegate;
+    public GameDetailAsyncResponse delegate;
     private static String gameId = "";
     private static String gameDate = "";
     private GameDetailResults gameDetailResults = new GameDetailResults();
@@ -338,9 +338,9 @@ public class GameDetail {
         }
 
 
-            @Override
+        @Override
         protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+            delegate.processFinish(gameDetailResults);
         }
     }
 }
