@@ -8,12 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 
 public class PlayerFragment extends Fragment implements AsyncResponse {
     // Store instance variables
     ListView lvPlayers;
+    ProgressBar pbLoading;
 
     // newInstance constructor for creating fragment with arguments
     public static PlayerFragment newInstance(int page, String title) {
@@ -52,6 +54,10 @@ public class PlayerFragment extends Fragment implements AsyncResponse {
             }
         });
 
+        // on some click or some loading we need to wait for...
+        pbLoading = (ProgressBar) view.findViewById(R.id.progress_bar);
+        pbLoading.setVisibility(ProgressBar.VISIBLE);
+
         return view;
 
     }
@@ -64,6 +70,8 @@ public class PlayerFragment extends Fragment implements AsyncResponse {
             players[i] = player;
             Log.d("PLAYERS: ", player.getName());
         }
+        pbLoading.setVisibility(View.GONE);
         lvPlayers.setAdapter(new PlayersListViewAdapter(getContext(), players));
+
     }
 }

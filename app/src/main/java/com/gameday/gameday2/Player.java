@@ -236,7 +236,7 @@ public class Player {
 
                                 String name = FileParser.parseID(playerFileData, FileParser.PLAYER_NAME);
                                 String position = FileParser.parseID(playerFileData, FileParser.POSITION);
-                                String biography = loadBio(name);
+                                // String biography = loadBio(name);
 
                                 //create player object
                                 player.setBiography(biography);
