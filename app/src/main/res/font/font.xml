@@ -16,4 +16,12 @@
         android:fontStyle="normal"
         android:fontWeight="400"
         android:font="@font/opensansregular" />
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="400"
+        android:font="@font/bebasneue" />
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="400"
+        android:font="@font/goboldreg" />
 </font-family>

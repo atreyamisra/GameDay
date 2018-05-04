@@ -39,6 +39,7 @@ public class Player implements Comparable<Player>, Serializable {
     private String position;
     private String pointsPerGame;
     private Bitmap profilePhoto;
+    private String jersey;
     private Context context;
     private ArrayList<Player> topTwentyPlayers = new ArrayList<>();
     public AsyncResponse delegate;
@@ -133,6 +134,14 @@ public class Player implements Comparable<Player>, Serializable {
     /** Gets canonical name **/
     public String getPointsPerGame() {
         return pointsPerGame;
+    }
+
+    public String getJersey() {
+        return jersey;
+    }
+
+    public void setJersey(String jersey) {
+        this.jersey = jersey;
     }
 
     /** Gets canonical name **/
