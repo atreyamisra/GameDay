@@ -38,8 +38,8 @@ public class Player implements Comparable<Player>, Serializable {
     private String biography;
     private String position;
     private String pointsPerGame;
-    private Bitmap profilePhoto;
     private String jersey;
+    private SerialBitmap profilePhoto;
     private Context context;
     private ArrayList<Player> topTwentyPlayers = new ArrayList<>();
     public AsyncResponse delegate;
@@ -86,11 +86,11 @@ public class Player implements Comparable<Player>, Serializable {
         return position;
     }
 
-    public Bitmap getProfilePhoto() {
+    public SerialBitmap getProfilePhoto() {
         return profilePhoto;
     }
 
-    public void setProfilePhoto(Bitmap profilePhoto) {
+    public void setProfilePhoto(SerialBitmap profilePhoto) {
         this.profilePhoto = profilePhoto;
     }
 
@@ -254,13 +254,16 @@ public class Player implements Comparable<Player>, Serializable {
                                 // String biography = loadBio(name);
 
                                 //create player object
-                                player.setBiography(biography);
+                                //player.setBiography(biography);
                                 player.setName(name);
+                                String bio = loadBio(player.name);
+                                bio = bio.replaceAll("\\[.*?\\]", "");
+                                player.setBiography(bio);
                                 player.setPosition(position);
                                 player.setTeam(teamName);
                                 player.setPointsPerGame(ppg);
                                 Bitmap profilePhoto = loadImage(player);
-                                player.setProfilePhoto(profilePhoto);
+                                player.setProfilePhoto(new SerialBitmap(profilePhoto));
 
                                 topTwentyQueue.add(player);
                                 playerFile.close();
@@ -372,7 +375,7 @@ public class Player implements Comparable<Player>, Serializable {
 
     }
 
-    private String loadBio(String name) throws IOException {
+    public String loadBio(String name) throws IOException {
         Document doc = Jsoup.connect("https://en.wikipedia.org/wiki/" + name).get();
         Elements paragraphs = doc.select(".mw-content-ltr p");
         Element firstParagraph = paragraphs.first();

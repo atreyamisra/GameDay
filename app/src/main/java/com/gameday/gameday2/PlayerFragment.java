@@ -16,6 +16,7 @@ public class PlayerFragment extends Fragment implements AsyncResponse {
     // Store instance variables
     ListView lvPlayers;
     ProgressBar pbLoading;
+    Player[] players;
 
     // newInstance constructor for creating fragment with arguments
     public static PlayerFragment newInstance(int page, String title) {
@@ -45,15 +46,6 @@ public class PlayerFragment extends Fragment implements AsyncResponse {
         View view = inflater.inflate(R.layout.fragment_players, container, false);
 
         lvPlayers = (ListView) view.findViewById(R.id.lv_players);
-        lvPlayers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (adapterView.getSelectedItem() != null ) {
-                    Log.d("PLAYER CLICKED: ", adapterView.getSelectedItem().toString());
-                }
-            }
-        });
-
         // on some click or some loading we need to wait for...
         pbLoading = (ProgressBar) view.findViewById(R.id.progress_bar);
         pbLoading.setVisibility(ProgressBar.VISIBLE);
@@ -70,6 +62,7 @@ public class PlayerFragment extends Fragment implements AsyncResponse {
             players[i] = player;
             Log.d("PLAYERS: ", player.getName());
         }
+        this.players = players;
         pbLoading.setVisibility(View.GONE);
         lvPlayers.setAdapter(new PlayersListViewAdapter(getContext(), players));
 
