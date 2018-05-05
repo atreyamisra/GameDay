@@ -7,13 +7,28 @@
     android:padding="10dp"
     android:weightSum="5">
 
-    <ImageView
-        android:id="@+id/iv_player_1"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:src="@mipmap/ic_launcher"/>
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <ImageView
+            android:id="@+id/iv_player_1"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:src="@mipmap/ic_launcher" />
+
+        <TextView
+            android:id="@+id/tv_player_1_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/iv_player_1"
+            android:layout_marginTop="0dp"
+            android:gravity="center"
+            android:textSize="10sp" />
+    </RelativeLayout>
+
     <TextView
         android:id="@+id/tv_player_1"
         android:layout_width="wrap_content"
@@ -42,12 +57,26 @@
         android:gravity="center"
         android:fontFamily="@font/opensanslight"
         android:text="40"/>
-    <ImageView
-        android:id="@+id/iv_player_2"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:src="@mipmap/ic_launcher"/>
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+        <ImageView
+            android:id="@+id/iv_player_2"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:src="@mipmap/ic_launcher"/>
+        <TextView
+            android:id="@+id/tv_player_2_name"
+            android:layout_below="@+id/iv_player_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            android:gravity="center"/>
+    </RelativeLayout>
+
 
 </LinearLayout>

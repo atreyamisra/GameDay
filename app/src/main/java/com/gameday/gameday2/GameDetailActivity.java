@@ -9,7 +9,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class GameDetailActivity extends AppCompatActivity {
+import java.util.ArrayList;
+
+public class GameDetailActivity extends AppCompatActivity implements GameDetailAsyncResponse{
 
     ListView lvHeadToHead;
     ListView lvTeam1PastGames;
@@ -23,6 +25,9 @@ public class GameDetailActivity extends AppCompatActivity {
     TextView tvTime;
     TextView tvQuarter;
 
+    ArrayList<Player> team1Players;
+    ArrayList<Player> team2PLayers;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,8 +36,11 @@ public class GameDetailActivity extends AppCompatActivity {
         Game game = (Game) myIntent.getSerializableExtra("game"); // will return "FirstKeyValue"
         Log.d("GOT THE EXTRA", game.getGameId());
 
+        GameDetail.delegate = this;
+        GameDetail.getGameDetails(game.getGameId(), "20180503", this);
+
         lvHeadToHead = (ListView) findViewById(R.id.lv_head_to_head);
-        lvHeadToHead.setAdapter(new HeadToHeadListViewAdapter(this, new String[3]));
+        // lvHeadToHead.setAdapter(new HeadToHeadListViewAdapter(this, new String[3]));
 
         lvTeam1PastGames = (ListView) findViewById(R.id.lv_home_games);
         lvTeam1PastGames.setAdapter(new PastGameListViewAdapter(this, new Game[3]));
@@ -61,5 +69,13 @@ public class GameDetailActivity extends AppCompatActivity {
         tvTime.setText(game.getClock());
 
 
+    }
+
+    @Override
+    public void processFinish(GameDetailResults results) {
+        team1Players = results.gethTeamPlayers();
+        team2PLayers = results.getvTeamPlayers();
+
+        lvHeadToHead.setAdapter(new HeadToHeadListViewAdapter(this, team1Players, team2PLayers));
     }
 }

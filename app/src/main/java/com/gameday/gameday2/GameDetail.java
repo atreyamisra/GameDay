@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,26 +16,25 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 
 import static com.gameday.gameday2.Player.formatPlayerName;
 
 public class GameDetail {
-    public GameDetailAsyncResponse delegate;
+
+    public static GameDetailAsyncResponse delegate;
     private static String gameId = "";
     private static String gameDate = "";
     private GameDetailResults gameDetailResults = new GameDetailResults();
-    private HashSet<String> playoffTeams = new HashSet<>(Arrays.asList("celtics\n" +
-            "sixers\n" +
-            "raptors\n" +
-            "cavaliers\n" +
-            "warriors\n" +
-            "jazz\n" +
-            "rockets\n" +
-            "pelicans\n"));
+    private HashSet<String> playoffTeams = new HashSet<>(Arrays.asList("celtics", "sixers", "raptors",
+            "cavaliers", "warriors", "jazz", "rockets", "pelicans"));
 
 
     public static void getGameDetails(String _gameId, String _gameDate, Context context) {
@@ -74,6 +75,7 @@ public class GameDetail {
             return null;
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.O)
         private ArrayList<Game> parseGameData(String gameJSON) {
             try {
                 JSONObject jsonObject = new JSONObject(gameJSON);
@@ -86,7 +88,8 @@ public class GameDetail {
                     JSONObject gameData = games.getJSONObject(j);
 
                     String startTimeStr = gameData.getString("startTimeUTC");
-                    Instant startTime = Instant.parse(startTimeStr);
+                    Date start = new SimpleDateFormat("YYYY-MM-DD'T'hh:mm:ss.SSSX").parse(startTimeStr);
+                    Instant startTime = Instant.parse(start.toString());
                     Instant currentTime = Instant.now();
                     if (startTime.isAfter(currentTime)) continue;
 
@@ -122,6 +125,8 @@ public class GameDetail {
 
             catch (JSONException e) {
                 e.printStackTrace();
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
 
             return null;
@@ -129,18 +134,27 @@ public class GameDetail {
         }
 
         private ArrayList<Player> retrieveTeamData(JSONObject jsonObject, String side) throws JSONException, IOException {
-            String teamId = jsonObject.getJSONObject(side).get("teamId").toString();
+            String teamId = jsonObject.getJSONObject("basicGameData").getJSONObject(side).get("teamId").toString();
             String teamName = getTeamName(teamId);
 
-            JSONObject stats = jsonObject.getJSONObject("stats").getJSONObject(side);
-            String highestPoints = stats.getJSONObject("leaders").getJSONObject("points").getString("value");
-            JSONArray pointLeaders = stats.getJSONObject("leaders").getJSONObject("points").getJSONArray("players");
+            JSONObject stats = jsonObject.getJSONObject("stats");
+            String highestPoints = stats.getJSONObject(side).getJSONObject("leaders").getJSONObject("points").getString("value");
+            JSONObject pointLeader = stats.getJSONObject(side).getJSONObject("leaders").getJSONObject("points").getJSONArray("players").getJSONObject(0);
+            String highestReounds = stats.getJSONObject(side).getJSONObject("leaders").getJSONObject("rebounds").getString("value");
+            JSONObject reboundLeader = stats.getJSONObject(side).getJSONObject("leaders").getJSONObject("rebounds").getJSONArray("players").getJSONObject(0);
+            String highestAssits = stats.getJSONObject(side).getJSONObject("leaders").getJSONObject("assists").getString("value");
+            JSONObject assistsLeader = stats.getJSONObject(side).getJSONObject("leaders").getJSONObject("assists").getJSONArray("players").getJSONObject(0);
 
+
+            ArrayList<JSONObject> playerStats = new ArrayList<>();
+            playerStats.add(pointLeader);
+            playerStats.add(reboundLeader);
+            playerStats.add(assistsLeader);
             ArrayList<Player> players = new ArrayList<>();
             HashSet<String> ids = new HashSet<>();
 
-            for(int i = 0; i < pointLeaders.length() && players.size() < 3; i++) {
-                String playerId = pointLeaders.getString(i);
+            for(int i = 0; i < playerStats.size(); i++) {
+                String playerId = playerStats.get(i).getString("personId");
                 ids.add(playerId);
 
                 FileInputStream playerFile = context.openFileInput(playerId);
@@ -149,7 +163,6 @@ public class GameDetail {
                 int info;
                 while ((info = playerFile.read()) != -1) {
                     playerFileContents.append((char) info);
-
                 }
 
                 String playerFileData = playerFileContents.toString();
@@ -157,49 +170,56 @@ public class GameDetail {
                 Bitmap image = loadImage(name);
 
                 Player player = new Player();
-                player.setProfilePhoto(image);
-                player.setPointsScoredInGame(highestPoints);
+                //player.setProfilePhoto(image);
+                if (i ==0)
+                        player.setPointsScoredInGame(highestPoints);
+                else if (i ==1)
+                        player.setPointsScoredInGame(highestReounds);
+                 else if (i ==2)
+                        player.setPointsScoredInGame(highestAssits);
 
+                player.setName(name);
+                player.setProfilePhoto(new SerialBitmap(image));
                 players.add(player);
-
             }
 
-            if(players.size() < 2) {
-                JSONArray allPlayers = jsonObject.getJSONArray("activePlayers");
-                for(int i = 0; i < allPlayers.length() && players.size() <= 2; i++) {
-                    String tId = allPlayers.getJSONObject(i).getString("teamId");
-                    if(!tId.equals(teamId)) continue;
+//            if(players.size() < 2) {
+//                JSONArray allPlayers = stats.getJSONArray("activePlayers");
+//                for(int i = 0; i < allPlayers.length() && players.size() <= 2; i++) {
+//                    String tId = allPlayers.getJSONObject(i).getString("teamId");
+//                    if(!tId.equals(teamId)) continue;
+//
+//                    String pId = allPlayers.getJSONObject(i).getString("personId");
+//                    String pointsScored = allPlayers.getJSONObject(i).getString("points");
+//                    FileInputStream playerFile = context.openFileInput(pId);
+//                    StringBuilder playerFileContents = new StringBuilder();
+//
+//                    int info;
+//                    while ((info = playerFile.read()) != -1) {
+//                        playerFileContents.append((char) info);
+//
+//                    }
+//
+//                    String playerFileData = playerFileContents.toString();
+//                    String name = FileParser.parseID(playerFileData, FileParser.PLAYER_NAME);
+//                    Bitmap image = loadImage(name);
+//
+//                    Player player = new Player();
+//                    //player.setProfilePhoto(image);
+//                    player.setPointsScoredInGame(pointsScored);
+//
+//                    players.add(player);
+//
+//
+//                }
+//            }
 
-                    String pId = allPlayers.getJSONObject(i).getString("personId");
-                    FileInputStream playerFile = context.openFileInput(pId);
-                    StringBuilder playerFileContents = new StringBuilder();
-
-                    int info;
-                    while ((info = playerFile.read()) != -1) {
-                        playerFileContents.append((char) info);
-
-                    }
-
-                    String playerFileData = playerFileContents.toString();
-                    String name = FileParser.parseID(playerFileData, FileParser.PLAYER_NAME);
-                    Bitmap image = loadImage(name);
-
-                    Player player = new Player();
-                    player.setProfilePhoto(image);
-                    player.setPointsScoredInGame(highestPoints);
-
-                    players.add(player);
-
-
-                }
-            }
-
-            if(side.equals("vTeam")) {
-                pastVGames = getPastGames(teamName);
-            }
-            else {
-                pastHGames = getPastGames(teamName);
-            }
+//            if(side.equals("vTeam")) {
+//                pastVGames = getPastGames(teamName);
+//            }
+//            else {
+//                pastHGames = getPastGames(teamName);
+//            }
 
             return players;
         }

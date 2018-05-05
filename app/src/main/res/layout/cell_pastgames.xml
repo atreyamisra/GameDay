@@ -27,8 +27,7 @@
             android:id="@+id/iv_team_1"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:scaleType="centerCrop"
-            android:src="@mipmap/ic_launcher" />
+            android:scaleType="centerCrop" />
 
         <TextView
             android:id="@+id/tv_score_team_1"
@@ -91,8 +90,7 @@
             android:id="@+id/iv_team_2"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:scaleType="centerCrop"
-            android:src="@mipmap/ic_launcher" />
+            android:scaleType="centerCrop" />
 
         <TextView
             android:id="@+id/tv_score_team_2"

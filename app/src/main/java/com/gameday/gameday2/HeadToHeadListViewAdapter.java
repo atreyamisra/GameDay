@@ -8,26 +8,32 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+
 public class HeadToHeadListViewAdapter extends BaseAdapter {
     Context context;
     private static LayoutInflater inflater = null;
-    String[] data;
+    ArrayList<Player> team1;
+    ArrayList<Player> team2;
 
-    public HeadToHeadListViewAdapter(Context context, String[] data) {
+    public HeadToHeadListViewAdapter(Context context, ArrayList<Player> team1, ArrayList<Player> team2) {
         this.context = context;
-        this.data = data;
+        this.team1 = team1;
+        this.team2 = team2;
         inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
     public int getCount() {
-        return data.length;
+        return team1.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return data[position];
+        return team1.get(position);
     }
 
     @Override
@@ -44,12 +50,15 @@ public class HeadToHeadListViewAdapter extends BaseAdapter {
         TextView tvPlayer2Score = (TextView) vi.findViewById(R.id.tv_player_2);
         ImageView ivPlayer1 = (ImageView) vi.findViewById(R.id.iv_player_1);
         ImageView ivPlayer2 = (ImageView) vi.findViewById(R.id.iv_player_2);
+        TextView tvPlayer1 = (TextView) vi.findViewById(R.id.tv_player_1_name);
+        TextView tvPlayer2 = (TextView) vi.findViewById(R.id.tv_player_2_name);
 
-//        tvPlayer1Score.setText();
-//        tvPlayer2Score.setText();
-//        ivPlayer1.setImageBitmap();
-//        ivPlayer2.setImageBitmap();
-
+        tvPlayer1Score.setText(team1.get(position).getPointsScoredInGame());
+        tvPlayer2Score.setText(team1.get(position).getPointsScoredInGame());
+        ivPlayer1.setImageBitmap(team2.get(position).getProfilePhoto().bitmap);
+        ivPlayer2.setImageBitmap(team2.get(position).getProfilePhoto().bitmap);
+        tvPlayer1.setText(team1.get(position).getName());
+        tvPlayer2.setText(team2.get(position).getName());
         return vi;
     }
 }
