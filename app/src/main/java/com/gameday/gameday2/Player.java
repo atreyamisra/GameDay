@@ -39,6 +39,7 @@ public class Player implements Comparable<Player>, Serializable {
     private String position;
     private String pointsPerGame;
     private String jersey;
+    private String pointsScoredInGame;
     private SerialBitmap profilePhoto;
     private Context context;
     private ArrayList<Player> topTwentyPlayers = new ArrayList<>();
@@ -69,6 +70,14 @@ public class Player implements Comparable<Player>, Serializable {
     /** Sets canonical name **/
     public void setBiography(String biography) {
         this.biography = biography;
+    }
+
+    public void setPointsScoredInGame(String pointsScoredInGame) {
+        this.pointsScoredInGame = pointsScoredInGame;
+    }
+
+    public String getPointsScoredInGame() {
+        return pointsScoredInGame;
     }
 
     /** Gets canonical name **/

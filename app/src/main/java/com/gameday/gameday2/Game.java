@@ -325,7 +325,6 @@ public class Game implements Serializable {
             final Calendar cal = Calendar.getInstance();
 
             cal.add(Calendar.DATE, prevDay);
-
             String formattedDate = formatDate(cal.getTime());
 
             return formattedDate;
